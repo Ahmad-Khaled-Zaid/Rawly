@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "roles")
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor 
+// @NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
