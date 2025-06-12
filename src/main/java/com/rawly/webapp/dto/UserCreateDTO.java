@@ -38,6 +38,7 @@ public class UserCreateDTO {
 
     @Email(message = "Please provide a valid email address.", groups = CreateGroup.class)
     @NotBlank(message = "Email is required.", groups = CreateGroup.class)
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.")
     private String email;
 
     @NotBlank(message = "Password is required.", groups = CreateGroup.class)
