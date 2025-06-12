@@ -3,11 +3,15 @@ package com.rawly.webapp.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rawly.webapp.model.Gender;
 import com.rawly.webapp.validation.CreateGroup;
 import com.rawly.webapp.validation.annotations.ValidEmail;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -42,6 +46,9 @@ public class UserCreateDTO {
     @ValidEmail(message = "Please enter a valid email address", groups = CreateGroup.class)
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.", groups = CreateGroup.class)
     private String email;
+
+    @NotNull(message = "Gender is required.", groups = CreateGroup.class)
+    private Gender gender;
 
     @NotBlank(message = "Password is required.", groups = CreateGroup.class)
     @Size(min = 8, max = 100, message = "Password must be at least 8 characters.", groups = CreateGroup.class)

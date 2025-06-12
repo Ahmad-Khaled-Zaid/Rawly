@@ -8,9 +8,12 @@ import java.util.UUID;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +51,40 @@ public class GlobalExceptionHandler {
                                 errors,
                                 request.getRequestURI(),
                                 UUID.randomUUID().toString());
+
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,
+                        HttpServletRequest request) {
+                Throwable cause = ex.getCause();
+
+                ErrorResponse errorResponse;
+
+                if (cause instanceof InvalidFormatException) {
+                        InvalidFormatException ife = (InvalidFormatException) cause;
+                        String targetType = ife.getTargetType().getSimpleName();
+                        String invalidValue = String.valueOf(ife.getValue());
+                        String message = "Invalid value '" + invalidValue + "' for type " +
+                                        targetType + ". Please provide a valid value.";
+
+                        errorResponse = new ErrorResponse(
+                                        LocalDateTime.now(),
+                                        HttpStatus.BAD_REQUEST.value(),
+                                        "Invalid value",
+                                        message,
+                                        request.getRequestURI(),
+                                        UUID.randomUUID().toString());
+                } else {
+                        errorResponse = new ErrorResponse(
+                                        LocalDateTime.now(),
+                                        HttpStatus.BAD_REQUEST.value(),
+                                        "Malformed JSON request",
+                                        ex.getMessage(),
+                                        request.getRequestURI(),
+                                        UUID.randomUUID().toString());
+                }
 
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }

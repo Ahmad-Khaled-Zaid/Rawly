@@ -20,6 +20,8 @@ import com.rawly.webapp.validation.annotations.ValidEmail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,8 +30,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -89,6 +91,11 @@ public class User implements UserDetails {
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.")
     @Column(nullable = false, unique = true)
     private String email;
+
+    @NotNull(message = "Gender is required.")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @NotBlank(message = "Password is required.")
     @Size(min = 8, max = 100, message = "Password must be at least 8 characters.")
@@ -184,9 +191,10 @@ public class User implements UserDetails {
         user.lastName = userDetails.getLastName();
         user.username = userDetails.getUsername();
         user.email = userDetails.getEmail();
+        user.gender = userDetails.getGender();
         user.password = encodedPassword;
         user.phoneNumber = userDetails.getPhoneNumber();
-        user.roles = assignedRolesSet;
+        user.roles = assignedRolesSet; 
         return user;
     }
 
