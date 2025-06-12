@@ -52,7 +52,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody @Validated(UpdateGroup.class) UserUpdateDTO user) {
+    public ResponseEntity<Void> updateUser(@PathVariable Long id,
+            @RequestBody @Validated(UpdateGroup.class) UserUpdateDTO user) {
 
         userService.updateUser(id, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -61,6 +62,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/deleteAllUsers")
+    public ResponseEntity<Void> deleteAllUsers() {
+        userService.deleteAllUsers();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
