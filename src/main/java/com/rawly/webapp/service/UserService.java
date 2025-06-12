@@ -68,6 +68,10 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public void deleteAllUsers() {
+        userRepository.deleteAll();
+    }
+
     public void validateUserFields(UserCreateDTO userDetails) {
         List<String> conflicts = new ArrayList<>();
 
