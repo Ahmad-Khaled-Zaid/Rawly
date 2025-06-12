@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rawly.webapp.validation.CreateGroup;
+import com.rawly.webapp.validation.annotations.ValidEmail;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +39,8 @@ public class UserCreateDTO {
 
     @Email(message = "Please provide a valid email address.", groups = CreateGroup.class)
     @NotBlank(message = "Email is required.", groups = CreateGroup.class)
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.")
+    @ValidEmail(message = "Please enter a valid email address", groups = CreateGroup.class)
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.", groups = CreateGroup.class)
     private String email;
 
     @NotBlank(message = "Password is required.", groups = CreateGroup.class)

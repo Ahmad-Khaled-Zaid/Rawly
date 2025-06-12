@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
+import com.rawly.webapp.validation.annotations.ValidEmail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,13 +60,21 @@ public class User implements UserDetails {
 
     @NotBlank(message = "First name is required.")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters.")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only English letters.")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only English letters and spaces.") // Supports
+                                                                                                            // compound
+                                                                                                            // names
+                                                                                                            // like
+                                                                                                            // 'Mohammad
+                                                                                                            // Ali'
     @Column(nullable = false)
     private String firstName;
 
     @NotBlank(message = "Last name is required.")
     @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters.")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only English letters.")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only English letters and spaces.") // Supports
+                                                                                                           // compound
+                                                                                                           // names like
+                                                                                                           // 'Al Saadi'
     @Column(nullable = false)
     private String lastName;
 
@@ -75,8 +84,9 @@ public class User implements UserDetails {
     @Pattern(regexp = "^(?!.*@)(?!.*__)(?!_)(?![0-9])[A-Za-z0-9_]{5,50}(?<!_)$", message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.")
     private String username;
 
-    @Email(message = "Please provide a valid email address.")
+    @ValidEmail(message = "Please enter a valid email address")
     @NotBlank(message = "Email is required.")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.")
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -168,7 +178,7 @@ public class User implements UserDetails {
         this.username = userDetails.getUsername();
     }
 
-    public static User createFromDTO(UserCreateDTO userDetails,String encodedPassword, Set<Role> assignedRolesSet) {
+    public static User createFromDTO(UserCreateDTO userDetails, String encodedPassword, Set<Role> assignedRolesSet) {
         User user = new User();
         user.firstName = userDetails.getFirstName();
         user.lastName = userDetails.getLastName();
