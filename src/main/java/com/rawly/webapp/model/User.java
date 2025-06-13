@@ -17,6 +17,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.validation.annotations.ValidEmail;
+import com.rawly.webapp.validation.annotations.ValidFirstName;
+import com.rawly.webapp.validation.annotations.ValidLastName;
+import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
+import com.rawly.webapp.validation.annotations.ValidUsername;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,41 +53,27 @@ import lombok.ToString;
 @NoArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
-    /**
-     * TODO: prevent username to accept email value , will check in java code.
-     * TODO: igonore id from Req and Res
-     **/
 
     @Id
-    @Column(updatable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @EqualsAndHashCode.Include
+    @Column(updatable = false)
     private Long id;
 
-    @NotBlank(message = "First name is required.")
-    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters.")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only English letters and spaces.") // Supports
-                                                                                                            // compound
-                                                                                                            // names
-                                                                                                            // like
-                                                                                                            // 'Mohammad
-                                                                                                            // Ali'
+    @ValidFirstName
     @Column(nullable = false)
     private String firstName;
 
-    @NotBlank(message = "Last name is required.")
-    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters.")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only English letters and spaces.") // Supports
-                                                                                                           // compound
-                                                                                                           // names like
-                                                                                                           // 'Al Saadi'
+    @NotBlank(message = "{last.name.required}")
+    @Size(min = 3, max = 50, message = "{last.name.size}")
+    @ValidLastName(message = "{last.name.invalid}")
     @Column(nullable = false)
     private String lastName;
 
     @NotBlank(message = "Username is required.")
-    @Column(unique = true, nullable = false)
     @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters.")
-    @Pattern(regexp = "^(?!.*@)(?!.*__)(?!_)(?![0-9])[A-Za-z0-9_]{5,50}(?<!_)$", message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.")
+    @ValidUsername(message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.")
+    @Column(unique = true, nullable = false)
     private String username;
 
     @ValidEmail(message = "Please enter a valid email address")
@@ -107,7 +97,7 @@ public class User implements UserDetails {
 
     @NotBlank(message = "Phone number is required.")
     @Column(nullable = false, unique = true)
-    @Pattern(regexp = "^[0-9]{7,12}$", message = "Phone number must be between 7 and 12 digits")
+    @ValidPhoneNumber(message = "Phone number must be between 7 and 12 digits")
     private String phoneNumber;
 
     @CreationTimestamp

@@ -1,0 +1,70 @@
+package com.rawly.webapp.validation;
+
+import com.rawly.webapp.util.ValidationPatterns;
+import com.rawly.webapp.util.ValidationUtils;
+import com.rawly.webapp.validation.annotations.ValidLastName;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+/**
+ * Validator for last name fields.
+ * Implements {@link ConstraintValidator} for the {@link ValidLastName}
+ * annotation.
+ * 
+ * This validator ensures that a last name:
+ * <ul>
+ * <li>Must not be {@code null} or empty</li>
+ * <li>Must not contain leading or trailing whitespace</li>
+ * <li>Length must be between 3 and 50 characters</li>
+ * <li>Must contain only English alphabet letters (A–Z, a–z)</li>
+ * <li>If the name is compound (e.g., two words), it may contain a single space between the words</li>
+ * </ul>
+ * Example valid names: <code>Smith</code>, <code>Van Damme</code>
+ * Example invalid names: <code> John </code>, <code>Al3x</code>,
+ * <code>Al--Ali</code>
+ *
+ * @see ValidLastName
+ * @see ConstraintValidator
+ */
+
+public class LastNameValidator implements ConstraintValidator<ValidLastName, String> {
+
+    @Override
+    public void initialize(ValidLastName constraintAnnotation) {
+    }
+
+    @Override
+    public boolean isValid(String lastName, ConstraintValidatorContext context) {
+        if (isNullOrEmpty(lastName)) {
+            return ValidationUtils.buildViolation(context, "last.name.required");
+        }
+        if (hasLeadingOrTrailingWhitespace(lastName)) {
+            return ValidationUtils.buildViolation(context, "last.name.whitespace");
+        }
+        if (isLengthInvalid(lastName)) {
+            return ValidationUtils.buildViolation(context, "last.name.size");
+        }
+        if (isInvalidPattern(lastName)) {
+            return ValidationUtils.buildViolation(context, "last.name.invalid");
+        }
+
+        return true;
+    }
+
+    private boolean isNullOrEmpty(String lastName) {
+        return lastName == null || lastName.trim().isEmpty();
+    }
+
+    private boolean hasLeadingOrTrailingWhitespace(String lastName) {
+        return !lastName.equals(lastName.trim());
+    }
+
+    private boolean isLengthInvalid(String lastName) {
+        return lastName.length() < 3 || lastName.length() > 50;
+    }
+
+    private boolean isInvalidPattern(String lastName) {
+        return !ValidationPatterns.LAST_NAME_PATTERN.matcher(lastName).matches();
+    }
+}

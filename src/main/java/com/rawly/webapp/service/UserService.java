@@ -17,7 +17,7 @@ import com.rawly.webapp.model.Role;
 import com.rawly.webapp.model.User;
 import com.rawly.webapp.repository.RoleRepository;
 import com.rawly.webapp.repository.UserRepository;
-import com.rawly.webapp.utilities.EmailUtils;
+import com.rawly.webapp.util.EmailUtils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

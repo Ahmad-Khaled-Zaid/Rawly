@@ -1,18 +1,25 @@
 package com.rawly.webapp.validation;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.rawly.webapp.repository.UserRepository;
+import com.rawly.webapp.validation.annotations.ValidEmail;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import org.apache.commons.validator.routines.EmailValidator;
-
-import com.rawly.webapp.validation.annotations.ValidEmail;
-
+@Component
 public class ValidEmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     private final EmailValidator emailValidator = EmailValidator.getInstance(false, false);
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
-    public void initialize(com.rawly.webapp.validation.annotations.ValidEmail constraintAnnotation) {
+    public void initialize(ValidEmail constraintAnnotation) {
     }
 
     @Override
@@ -24,6 +31,9 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
         if (!email.matches(strictRegex)) {
             return false;
         }
-        return emailValidator.isValid(email);
+        if (!emailValidator.isValid(email)) {
+            return false;
+        }
+        return !userRepository.existsByEmail(email);
     }
 }

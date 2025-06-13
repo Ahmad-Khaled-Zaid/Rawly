@@ -1,4 +1,4 @@
-package com.rawly.webapp.utilities;
+package com.rawly.webapp.util;
 
 import org.apache.commons.validator.routines.EmailValidator;
 

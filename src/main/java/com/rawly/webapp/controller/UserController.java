@@ -18,8 +18,8 @@ import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.model.User;
 import com.rawly.webapp.service.UserService;
-import com.rawly.webapp.validation.CreateGroup;
-import com.rawly.webapp.validation.UpdateGroup;
+import com.rawly.webapp.validation.validationGroups.CreateGroup;
+import com.rawly.webapp.validation.validationGroups.UpdateGroup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

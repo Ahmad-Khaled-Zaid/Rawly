@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rawly.webapp.model.Gender;
-import com.rawly.webapp.validation.CreateGroup;
 import com.rawly.webapp.validation.annotations.ValidEmail;
+import com.rawly.webapp.validation.annotations.ValidFirstName;
+import com.rawly.webapp.validation.annotations.ValidLastName;
+import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
+import com.rawly.webapp.validation.annotations.ValidUsername;
+import com.rawly.webapp.validation.validationGroups.CreateGroup;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,19 +28,15 @@ import lombok.ToString;
 @Builder
 @Getter
 public class UserCreateDTO {
-    @NotBlank(message = "First name is required.", groups = CreateGroup.class)
-    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters.", groups = CreateGroup.class)
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only English letters and spaces.", groups = CreateGroup.class)
+    @ValidFirstName(groups = CreateGroup.class)
     private String firstName;
 
-    @NotBlank(message = "Last name is required.", groups = CreateGroup.class)
-    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters.", groups = CreateGroup.class)
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only English letters and spaces.", groups = CreateGroup.class)
+    @ValidLastName(groups = CreateGroup.class)
     private String lastName;
 
     @NotBlank(message = "Username is required.", groups = CreateGroup.class)
     @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters.", groups = CreateGroup.class)
-    @Pattern(regexp = "^(?!.*@)(?!.*__)(?!_)(?![0-9])[A-Za-z0-9_]{5,50}(?<!_)$", message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.", groups = CreateGroup.class)
+    @ValidUsername(message = "Username must be 5-50 characters long, start with a letter, contain only letters, digits, or underscores, cannot start or end with an underscore, and must not contain consecutive underscores or the '@' symbol.", groups = CreateGroup.class)
     private String username;
 
     @Email(message = "Please provide a valid email address.", groups = CreateGroup.class)
@@ -59,7 +57,7 @@ public class UserCreateDTO {
     private String password;
 
     @NotBlank(message = "Phone number is required.", groups = CreateGroup.class)
-    @Pattern(regexp = "^[0-9]{7,12}$", message = "Phone number must be between 7 and 12 digits", groups = CreateGroup.class)
+    @ValidPhoneNumber(message = "Phone number must be between 7 and 12 digits", groups = CreateGroup.class)
     private String phoneNumber;
 
     private List<String> roles;
