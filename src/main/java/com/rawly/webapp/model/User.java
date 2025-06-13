@@ -178,11 +178,24 @@ public class User implements UserDetails {
     }
 
     public void updateFromDTO(UserUpdateDTO userDetails) {
-        this.firstName = userDetails.getFirstName();
-        this.lastName = userDetails.getLastName();
-        this.email = userDetails.getEmail();
-        this.phoneNumber = userDetails.getPhoneNumber();
-        this.username = userDetails.getUsername();
+        if (userDetails.getFirstName() != null) {
+            this.firstName = userDetails.getFirstName();
+        }
+        if (userDetails.getLastName() != null) {
+            this.lastName = userDetails.getLastName();
+        }
+        if (userDetails.getEmail() != null) {
+            this.email = userDetails.getEmail();
+        }
+        if (userDetails.getPhoneNumber() != null) {
+            this.phoneNumber = userDetails.getPhoneNumber();
+        }
+        if (userDetails.getUsername() != null) {
+            this.username = userDetails.getUsername();
+        }
+        if (userDetails.getGender() != null) {
+            this.gender = userDetails.getGender();
+        }
     }
 
     public static User createFromDTO(UserCreateDTO userDetails, String encodedPassword, Set<Role> assignedRolesSet) {
@@ -194,7 +207,7 @@ public class User implements UserDetails {
         user.gender = userDetails.getGender();
         user.password = encodedPassword;
         user.phoneNumber = userDetails.getPhoneNumber();
-        user.roles = assignedRolesSet; 
+        user.roles = assignedRolesSet;
         return user;
     }
 

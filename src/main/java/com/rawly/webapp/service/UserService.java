@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.exception.DuplicateFieldException;
+import com.rawly.webapp.exception.InvalidEmailException;
 import com.rawly.webapp.exception.ResourceNotFoundException;
 import com.rawly.webapp.model.Role;
 import com.rawly.webapp.model.User;
 import com.rawly.webapp.repository.RoleRepository;
 import com.rawly.webapp.repository.UserRepository;
+import com.rawly.webapp.utilities.EmailUtils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +60,10 @@ public class UserService {
     public void updateUser(Long id, UserUpdateDTO userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id: " + id + " is not found"));
+        if (userDetails.getEmail() != null && !EmailUtils.isValidEmail(userDetails.getEmail().trim())) {
+            throw new InvalidEmailException("Please enter a valid email address");
+        }
+
         user.updateFromDTO(userDetails);
         userRepository.save(user);
     }
@@ -74,7 +80,9 @@ public class UserService {
 
     public void validateUserFields(UserCreateDTO userDetails) {
         List<String> conflicts = new ArrayList<>();
+        if (userDetails.getEmail() != null) {
 
+        }
         if (userRepository.existsByEmail(userDetails.getEmail())) {
             conflicts.add("Email");
         }

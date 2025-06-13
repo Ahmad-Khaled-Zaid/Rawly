@@ -1,8 +1,8 @@
 package com.rawly.webapp.dto;
 
+import com.rawly.webapp.model.Gender;
 import com.rawly.webapp.validation.UpdateGroup;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -27,9 +27,11 @@ public class UserUpdateDTO {
     @Pattern(regexp = "^(?!.*@)(?!.*__)(?!_)(?![0-9])[A-Za-z0-9_]{5,50}(?<!_)$", message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.", groups = UpdateGroup.class)
     private String username;
 
-    @Email(message = "Please Enter Valid Email", groups = UpdateGroup.class)
     private String email;
 
     @Pattern(regexp = "^[0-9]{7,12}$", message = "Phone number must be between 7 and 12 digits", groups = UpdateGroup.class)
     private String phoneNumber;
+
+    
+    private Gender gender;
 }

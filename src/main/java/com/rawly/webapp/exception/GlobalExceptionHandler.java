@@ -35,6 +35,19 @@ public class GlobalExceptionHandler {
                 return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
 
+        @ExceptionHandler(InvalidEmailException.class)
+        public ResponseEntity<ErrorResponse> InvalidEmailException(InvalidEmailException ex,
+                        HttpServletRequest request) {
+                ErrorResponse error = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                "Invalid email ",
+                                ex.getMessage(),
+                                request.getRequestURI(),
+                                UUID.randomUUID().toString());
+                return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
                         HttpServletRequest request) {
