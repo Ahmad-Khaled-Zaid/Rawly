@@ -34,10 +34,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -64,21 +61,15 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String firstName;
 
-    @NotBlank(message = "{last.name.required}")
-    @Size(min = 3, max = 50, message = "{last.name.size}")
-    @ValidLastName(message = "{last.name.invalid}")
+    @ValidLastName
     @Column(nullable = false)
     private String lastName;
 
-    @NotBlank(message = "Username is required.")
-    @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters.")
-    @ValidUsername(message = "Username must be 5-50 characters long, start with a letter, contain only letters, numbers, or underscores, and must not start or end with an underscore or contain double underscores.")
+    @ValidUsername
     @Column(unique = true, nullable = false)
     private String username;
 
-    @ValidEmail(message = "Please enter a valid email address")
-    @NotBlank(message = "Email is required.")
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Email must be in a valid format.")
+    @ValidEmail
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -87,17 +78,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
-    @NotBlank(message = "Password is required.")
-    @Size(min = 8, max = 100, message = "Password must be at least 8 characters.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}\\[\\]:;<>,.?~\\-=/\\\\|'\"])[A-Za-z\\d!@#$%^&*()_+{}\\[\\]:;<>,.?~\\-=/\\\\|'\"]{8,}$", message = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.")
-    @Column(nullable = false)
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank(message = "Phone number is required.")
+    @ValidPhoneNumber
     @Column(nullable = false, unique = true)
-    @ValidPhoneNumber(message = "Phone number must be between 7 and 12 digits")
     private String phoneNumber;
 
     @CreationTimestamp
