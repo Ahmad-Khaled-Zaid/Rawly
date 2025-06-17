@@ -21,7 +21,7 @@ public @interface ValidPassword {
 
     int min() default 8;
 
-    int max() default 20;
+    int max() default 50;
 
     Class<?>[] groups() default {};
 

@@ -18,6 +18,10 @@ import jakarta.validation.Payload;
 public @interface ValidUsername {
     String message() default "Invalid username.";
 
+    int min() default 5;
+
+    int max() default 50;
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

@@ -1,7 +1,5 @@
 package com.rawly.webapp.validation;
 
-import org.springframework.stereotype.Component;
-
 import com.rawly.webapp.util.ValidationPatterns;
 import com.rawly.webapp.util.ValidationUtils;
 import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
@@ -9,11 +7,18 @@ import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-@Component
+/**
+ * Validator for phone numbers, implementing the {@link ConstraintValidator} interface.
+ * <p>
+ * This class checks if a given phone number string is valid according to the following rules:
+ * <ul>
+ *   <li>The phone number must not be null or empty.</li>
+ *   <li>The phone number must match the pattern defined in {@link ValidationPatterns#PHONE_NUMBER_PATTERN}.</li>
+ * </ul>
+ * If validation fails, a violation message is added to the context using {@link ValidationUtils#buildViolation}.
+ * </p>
+ */
 public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
-
-    // @Autowired
-    // private UserRepository userRepository;
 
     @Override
     public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
@@ -24,9 +29,6 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
         if (isInvalidPattern(phoneNumber)) {
             return ValidationUtils.buildViolation(context, "phone.number.invalid");
         }
-        // if (isPhoneNumberTaken(phoneNumber)) {
-        //     return ValidationUtils.buildViolation(context, "phone.number.taken");
-        // }
         return true;
     }
 
@@ -38,7 +40,4 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
         return !ValidationPatterns.PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches();
     }
 
-    // private boolean isPhoneNumberTaken(String phoneNumber) {
-    //     return userRepository.existsByPhoneNumber(phoneNumber);
-    // }
 }

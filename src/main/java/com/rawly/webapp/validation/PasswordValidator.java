@@ -7,9 +7,27 @@ import com.rawly.webapp.validation.annotations.ValidPassword;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * Validator for password fields, implementing custom validation logic.
+ * <p>
+ * This class checks if a password:
+ * <ul>
+ * <li>Is not <code>null</code> or empty</li>
+ * <li>Does not have leading or trailing whitespace</li>
+ * <li>Meets minimum and maximum length requirements</li>
+ * <li>Matches a defined password pattern</li>
+ * </ul>
+ * <p>
+ * Validation error messages are added to the context for each specific failure.
+ *
+ * @see ValidPassword
+ * @see ValidationPatterns#PASSWORD_PATTERN
+ * @see ValidationUtils#buildViolation(ConstraintValidatorContext, String)
+ */
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
     private int min;
     private int max;
+
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
         this.min = constraintAnnotation.min();

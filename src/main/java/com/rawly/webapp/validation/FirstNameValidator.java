@@ -35,8 +35,13 @@ import jakarta.validation.ConstraintValidatorContext;
  */
 public class FirstNameValidator implements ConstraintValidator<ValidFirstName, String> {
 
+    private int min;
+    private int max;
+
     @Override
     public void initialize(ValidFirstName constraintAnnotation) {
+        this.min = constraintAnnotation.min();
+        this.max = constraintAnnotation.max();
     }
 
     @Override
@@ -47,7 +52,7 @@ public class FirstNameValidator implements ConstraintValidator<ValidFirstName, S
         if (hasLeadingOrTrailingWhitespace(firstName)) {
             return ValidationUtils.buildViolation(context, "first.name.whitespace");
         }
-        if (isLengthInvalid(firstName)) {
+        if (isLengthOutOfBounds(firstName)) {
             return ValidationUtils.buildViolation(context, "first.name.size");
         }
         if (isInvalidPattern(firstName)) {
@@ -65,8 +70,8 @@ public class FirstNameValidator implements ConstraintValidator<ValidFirstName, S
         return !firstName.equals(firstName.trim());
     }
 
-    private boolean isLengthInvalid(String firstName) {
-        return firstName.length() < 3 || firstName.length() > 50;
+    private boolean isLengthOutOfBounds(String firstName) {
+        return firstName.length() < this.min || firstName.length() > this.max;
     }
 
     private boolean isInvalidPattern(String firstName) {

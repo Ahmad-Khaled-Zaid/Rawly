@@ -18,10 +18,11 @@ import jakarta.validation.ConstraintValidatorContext;
  * <li>Must not contain leading or trailing whitespace</li>
  * <li>Length must be between 3 and 50 characters</li>
  * <li>Must contain only English alphabet letters (A–Z, a–z)</li>
- * <li>If the name is compound (e.g., two words), it may contain a single space between the words</li>
+ * <li>If the name is compound (e.g., two words), it may contain a single space
+ * between the words</li>
  * </ul>
  * Example valid names: <code>Smith</code>, <code>Van Damme</code>
- * Example invalid names: <code> John </code>, <code>Al3x</code>,
+ * Example invalid names: <code>&#x2423;John&#x2423;</code>, <code>Al3x</code>,
  * <code>Al--Ali</code>
  *
  * @see ValidLastName
@@ -30,8 +31,13 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class LastNameValidator implements ConstraintValidator<ValidLastName, String> {
 
+    private int min;
+    private int max;
+
     @Override
     public void initialize(ValidLastName constraintAnnotation) {
+        this.min = constraintAnnotation.min();
+        this.max = constraintAnnotation.max();
     }
 
     @Override
@@ -42,7 +48,7 @@ public class LastNameValidator implements ConstraintValidator<ValidLastName, Str
         if (hasLeadingOrTrailingWhitespace(lastName)) {
             return ValidationUtils.buildViolation(context, "last.name.whitespace");
         }
-        if (isLengthInvalid(lastName)) {
+        if (isLengthOutOfBounds(lastName)) {
             return ValidationUtils.buildViolation(context, "last.name.size");
         }
         if (isInvalidPattern(lastName)) {
@@ -60,8 +66,8 @@ public class LastNameValidator implements ConstraintValidator<ValidLastName, Str
         return !lastName.equals(lastName.trim());
     }
 
-    private boolean isLengthInvalid(String lastName) {
-        return lastName.length() < 3 || lastName.length() > 50;
+    private boolean isLengthOutOfBounds(String lastName) {
+        return lastName.length() < this.min || lastName.length() > this.max;
     }
 
     private boolean isInvalidPattern(String lastName) {

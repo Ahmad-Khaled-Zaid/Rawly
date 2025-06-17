@@ -18,6 +18,10 @@ import jakarta.validation.Payload;
 public @interface ValidFirstName {
     String message() default "Invalid first name.";
 
+    int min() default 3;
+
+    int max() default 50;
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
