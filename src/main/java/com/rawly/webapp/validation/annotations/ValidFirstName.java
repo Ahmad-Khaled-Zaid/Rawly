@@ -21,6 +21,7 @@ public @interface ValidFirstName {
     int min() default 3;
 
     int max() default 50;
+    boolean isUpdate() default false;
 
     Class<?>[] groups() default {};
 

@@ -15,7 +15,6 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = PasswordValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-
 public @interface ValidPassword {
     String message() default "Invalid password.";
 

@@ -1,6 +1,7 @@
 package com.rawly.webapp.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,6 @@ public class UserController {
     @PostMapping("/createUser")
     public ResponseEntity<User> createUser(@RequestBody @Validated(CreateGroup.class) UserCreateDTO userDetails) {
         User user = userService.createUser(userDetails);
-        log.debug("1111111111", userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
@@ -46,14 +46,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable UUID id) {
 
         User user = userService.getUserById(id);
         return ResponseEntity.ok().body(user);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable Long id,
+    public ResponseEntity<Void> updateUser(@PathVariable UUID id,
             @RequestBody @Validated(UpdateGroup.class) UserUpdateDTO user) {
 
         userService.updateUser(id, user);
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -72,4 +72,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("/register")
+    public void postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+        
+    }
+    
 }

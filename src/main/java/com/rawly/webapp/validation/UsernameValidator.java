@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 /**
- * Validates usernames according to application requirements.
+ * Validates username according to application requirements.
  * This validator checks for:
  * <ul>
  * <li>Must not be {@code null} or empty</li>
@@ -29,15 +29,20 @@ public class UsernameValidator implements ConstraintValidator<ValidUsername, Str
 
     private int min;
     private int max;
+    private boolean isUpdate;
 
     @Override
     public void initialize(ValidUsername constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
+        this.isUpdate = constraintAnnotation.isUpdate();
     }
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
+        if (isUpdate && username == null) {
+            return true;
+        }
         if (isNullOrEmpty(username)) {
             return ValidationUtils.buildViolation(context, "username.required");
         }
@@ -47,7 +52,6 @@ public class UsernameValidator implements ConstraintValidator<ValidUsername, Str
         if (isInvalidPattern(username)) {
             return ValidationUtils.buildViolation(context, "username.invalid");
         }
-
         return true;
     }
 

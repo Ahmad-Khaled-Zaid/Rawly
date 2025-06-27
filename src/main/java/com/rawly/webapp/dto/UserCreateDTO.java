@@ -40,7 +40,7 @@ public class UserCreateDTO {
     @NotNull(message = "Gender is required.", groups = CreateGroup.class)
     private Gender gender;
 
-    @ValidPassword(min = 8, max = 20, groups = CreateGroup.class)
+    @ValidPassword(groups = CreateGroup.class)
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Setter

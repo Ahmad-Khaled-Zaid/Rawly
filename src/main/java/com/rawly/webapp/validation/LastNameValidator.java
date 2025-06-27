@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 /**
- * Validator for last name fields.
+ * Validator for last name field.
  * Implements {@link ConstraintValidator} for the {@link ValidLastName}
  * annotation.
  * 
@@ -33,15 +33,20 @@ public class LastNameValidator implements ConstraintValidator<ValidLastName, Str
 
     private int min;
     private int max;
+    private boolean isUpdate;
 
     @Override
     public void initialize(ValidLastName constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
+        this.isUpdate = constraintAnnotation.isUpdate();
     }
 
     @Override
     public boolean isValid(String lastName, ConstraintValidatorContext context) {
+        if (isUpdate && lastName == null) {
+            return true;
+        }
         if (isNullOrEmpty(lastName)) {
             return ValidationUtils.buildViolation(context, "last.name.required");
         }
@@ -54,7 +59,6 @@ public class LastNameValidator implements ConstraintValidator<ValidLastName, Str
         if (isInvalidPattern(lastName)) {
             return ValidationUtils.buildViolation(context, "last.name.invalid");
         }
-
         return true;
     }
 

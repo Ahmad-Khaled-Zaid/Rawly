@@ -22,6 +22,8 @@ public @interface ValidLastName {
 
     int max() default 50;
 
+    boolean isUpdate() default false;
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

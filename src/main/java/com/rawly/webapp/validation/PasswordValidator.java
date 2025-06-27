@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 /**
- * Validator for password fields, implementing custom validation logic.
+ * Validator for password field, implementing custom validation logic.
  * <p>
  * This class checks if a password:
  * <ul>

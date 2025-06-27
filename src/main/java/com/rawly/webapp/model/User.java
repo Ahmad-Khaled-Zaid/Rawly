@@ -1,16 +1,12 @@
 package com.rawly.webapp.model;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,24 +34,21 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @Builder
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User implements UserDetails {
+public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false)
-    private Long id;
+    private UUID id;
 
     @ValidFirstName
     @Column(nullable = false)
@@ -92,12 +85,14 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @JsonIgnore
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
     @Builder.Default
@@ -115,44 +110,6 @@ public class User implements UserDetails {
     @Builder.Default
     @JsonIgnore
     private boolean isEnabled = true;
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return isEnabled;
-    }
 
     public void updateFromDTO(UserUpdateDTO userDetails) {
         if (userDetails.getFirstName() != null) {
@@ -187,5 +144,4 @@ public class User implements UserDetails {
         user.roles = assignedRolesSet;
         return user;
     }
-
 }

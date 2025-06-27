@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Service;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.exception.DuplicateFieldException;
-import com.rawly.webapp.exception.InvalidEmailException;
 import com.rawly.webapp.exception.ResourceNotFoundException;
 import com.rawly.webapp.model.Role;
 import com.rawly.webapp.model.User;
 import com.rawly.webapp.repository.RoleRepository;
 import com.rawly.webapp.repository.UserRepository;
-import com.rawly.webapp.util.EmailUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,23 +50,19 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id: " + id + " is not found"));
     }
 
-    public void updateUser(Long id, UserUpdateDTO userDetails) {
+    public void updateUser(UUID id, UserUpdateDTO userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id: " + id + " is not found"));
-        if (userDetails.getEmail() != null && !EmailUtils.isValidEmail(userDetails.getEmail().trim())) {
-            throw new InvalidEmailException("Please enter a valid email address");
-        }
-
         user.updateFromDTO(userDetails);
         userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id: " + id + " is not found"));
         userRepository.delete(user);
