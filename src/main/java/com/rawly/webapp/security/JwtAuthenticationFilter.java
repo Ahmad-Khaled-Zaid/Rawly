@@ -1,8 +1,11 @@
 package com.rawly.webapp.security;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,42 +24,60 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
+    @Value("${security.open-endpoints}")
+    private final List<String> openEndpoints;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String path = request.getServletPath();
+        log.info("open endpoints {}", openEndpoints);
+        log.info("path {}", path);
+        boolean isOpen = openEndpoints.stream().anyMatch(path::startsWith);
+        log.info("isOpen {}", isOpen);
+
+        if (isOpen) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String authHeader = request.getHeader("Authorization");
+        log.info("authHeader-1 {}", authHeader);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.info("authHeader-2");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
             return;
         }
 
         try {
             final String token = authHeader.substring(7).trim();
+            log.info("trimmed token {}", token);
             if (token.isEmpty()) {
                 log.warn("Empty JWT token");
-                filterChain.doFilter(request, response);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Empty JWT token");
                 return;
             }
             final UUID userId = jwtService.extractUserId(token);
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            final boolean isTokenValid = jwtService.isTokenValid(token);
+            log.info("userId {}", userId);
+
+            if (isTokenValid && userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = customUserDetailsService.loadUserByUserId(userId);
-                if (jwtService.isTokenValid(token)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    log.debug("Authenticated user: {}", userId);
-                }
+                log.info("userDetails {}", userDetails);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                log.debug("Authenticated user: {}", userId);
             }
         } catch (Exception e) {
             log.debug("authentication Error for token {}", e.getMessage(), e);

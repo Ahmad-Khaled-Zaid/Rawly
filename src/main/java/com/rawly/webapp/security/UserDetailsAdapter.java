@@ -14,7 +14,7 @@ import com.rawly.webapp.model.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class UserDetailsAdapter implements UserDetails {
+public class UserDetailsAdapter implements UserDetails, IUserDetailsWithId {
     private final User user;
 
     @Override
@@ -27,6 +27,7 @@ public class UserDetailsAdapter implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public UUID getUserId() {
         return user.getId();
     }

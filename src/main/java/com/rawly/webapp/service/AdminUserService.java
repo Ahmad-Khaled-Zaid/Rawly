@@ -21,10 +21,12 @@ import com.rawly.webapp.repository.RoleRepository;
 import com.rawly.webapp.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+@Slf4j
+public class AdminUserService  {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;

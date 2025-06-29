@@ -10,7 +10,7 @@ import com.rawly.webapp.validation.annotations.ValidLastName;
 import com.rawly.webapp.validation.annotations.ValidPassword;
 import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
 import com.rawly.webapp.validation.annotations.ValidUsername;
-import com.rawly.webapp.validation.validationGroups.CreateGroup;
+import com.rawly.webapp.validation.validationGroups.ICreateGroup;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,28 +25,28 @@ import lombok.ToString;
 @Builder
 @Getter
 public class UserCreateDTO {
-    @ValidFirstName(groups = CreateGroup.class)
+    @ValidFirstName(groups = ICreateGroup.class)
     private String firstName;
 
-    @ValidLastName(groups = CreateGroup.class)
+    @ValidLastName(groups = ICreateGroup.class)
     private String lastName;
 
-    @ValidUsername(groups = CreateGroup.class)
+    @ValidUsername(groups = ICreateGroup.class)
     private String username;
 
-    @ValidEmail(groups = CreateGroup.class)
+    @ValidEmail(groups = ICreateGroup.class)
     private String email;
 
-    @NotNull(message = "Gender is required.", groups = CreateGroup.class)
+    @NotNull(message = "Gender is required.", groups = ICreateGroup.class)
     private Gender gender;
 
-    @ValidPassword(groups = CreateGroup.class)
+    @ValidPassword(groups = ICreateGroup.class)
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Setter
     private String password;
 
-    @ValidPhoneNumber(groups = CreateGroup.class)
+    @ValidPhoneNumber(groups = ICreateGroup.class)
     private String phoneNumber;
 
     private List<String> roles;

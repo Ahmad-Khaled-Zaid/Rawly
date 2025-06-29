@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.model.User;
-import com.rawly.webapp.service.UserService;
-import com.rawly.webapp.validation.validationGroups.CreateGroup;
-import com.rawly.webapp.validation.validationGroups.UpdateGroup;
+import com.rawly.webapp.service.AdminUserService;
+import com.rawly.webapp.validation.validationGroups.ICreateGroup;
+import com.rawly.webapp.validation.validationGroups.IUpdateGroup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
-    private final UserService userService;
+    private final AdminUserService userService;
 
     @PostMapping("/createUser")
-    public ResponseEntity<User> createUser(@RequestBody @Validated(CreateGroup.class) UserCreateDTO userDetails) {
+    public ResponseEntity<User> createUser(@RequestBody @Validated(ICreateGroup.class) UserCreateDTO userDetails) {
         User user = userService.createUser(userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -54,7 +54,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable UUID id,
-            @RequestBody @Validated(UpdateGroup.class) UserUpdateDTO user) {
+            @RequestBody @Validated(IUpdateGroup.class) UserUpdateDTO user) {
 
         userService.updateUser(id, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -72,10 +72,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/register")
-    public void postMethodName(@RequestBody String entity) {
-        //TODO: process POST request
-        
+    @GetMapping("/register")
+    public void postMethodName() {
+        // TODO: process POST request
+
     }
-    
 }

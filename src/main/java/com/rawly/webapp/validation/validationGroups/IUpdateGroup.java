@@ -1,5 +1,5 @@
 package com.rawly.webapp.validation.validationGroups;
 
-public interface UpdateGroup {
+public interface IUpdateGroup {
 
 }
