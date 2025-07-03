@@ -49,6 +49,20 @@ public class GlobalExceptionHandler {
                 return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
 
+        @ExceptionHandler(UserCreationException.class)
+        public ResponseEntity<ErrorResponse> handleUserCreationException(UserCreationException ex,
+                        HttpServletRequest request) {
+                ErrorResponse error = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "An internal error occurred.",
+                                ex.getMessage(),
+                                request.getRequestURI(),
+                                UUID.randomUUID().toString());
+
+                return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
                         HttpServletRequest request) {
@@ -129,7 +143,7 @@ public class GlobalExceptionHandler {
                                 LocalDateTime.now(),
                                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                 "Internal Server Error",
-                                ex.getMessage(),
+                                "Something went wrong. Please contact support with error ID: " + errorId,
                                 request.getRequestURI(),
                                 errorId);
                 return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

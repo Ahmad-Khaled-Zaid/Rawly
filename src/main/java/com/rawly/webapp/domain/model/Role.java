@@ -1,17 +1,13 @@
-package com.rawly.webapp.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.rawly.webapp.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -20,12 +16,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(updatable = false)
-    @JsonIgnore
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class Role extends BaseEntity {
 
     @Builder.Default
     @NotBlank(message = "Role is required")

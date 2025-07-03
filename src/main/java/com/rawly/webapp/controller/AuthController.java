@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rawly.webapp.dto.auth.LoginRequest;
 import com.rawly.webapp.dto.auth.LoginResponse;
-import com.rawly.webapp.dto.auth.RegisterRequest;
-import com.rawly.webapp.dto.auth.RegisterResponse;
 import com.rawly.webapp.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -29,9 +27,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
-        RegisterResponse registerResponse = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registerResponse);
-    }
+    // @PostMapping("/register")
+    // public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+    //     RegisterResponse registerResponse = authService.register(request);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(registerResponse);
+    // }
 }

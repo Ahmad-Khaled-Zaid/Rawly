@@ -51,19 +51,20 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+        IUserDetailsWithId userDetailsWithId = (IUserDetailsWithId) userDetails;
         return Jwts.builder().setClaims(extraClaims)
-                .setSubject(((UserDetailsAdapter) userDetails).getUserId().toString())
+                .setSubject((userDetailsWithId.getUserId()).toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, 60 * 1000); // 1 min
+        return generateToken(new HashMap<>(), userDetails, 60 * 1000); 
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, 60 * 60 * 24 * 30 * 1000); // 30 days
+        return generateToken(new HashMap<>(), userDetails, 60 * 60 * 24 * 30 * 1000); 
     }
 
     public Claims extractAllClaims(String token) {

@@ -1,6 +1,7 @@
 package com.rawly.webapp.validation;
 
 import com.rawly.webapp.dto.auth.RegisterRequest;
+import com.rawly.webapp.util.ValidationUtils;
 import com.rawly.webapp.validation.annotations.PasswordMatches;
 
 import jakarta.validation.ConstraintValidator;
@@ -10,7 +11,9 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(RegisterRequest request, ConstraintValidatorContext context) {
-        return request.getPassword() != null && request.getPassword().equals(request.getConfirmedPassword());
-
+        if (request.getPassword() == null || !request.getPassword().equals(request.getConfirmedPassword())) {
+            return ValidationUtils.buildViolation(context, "validation.password.mismatch");
+        }
+        return true;
     }
 }

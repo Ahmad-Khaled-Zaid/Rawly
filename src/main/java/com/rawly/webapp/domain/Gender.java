@@ -1,4 +1,4 @@
-package com.rawly.webapp.model;
+package com.rawly.webapp.domain;
 
 public enum Gender {
     MALE,

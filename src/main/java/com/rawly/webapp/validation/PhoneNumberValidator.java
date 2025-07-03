@@ -1,11 +1,15 @@
 package com.rawly.webapp.validation;
 
+import org.springframework.stereotype.Component;
+
 import com.rawly.webapp.util.ValidationPatterns;
 import com.rawly.webapp.util.ValidationUtils;
 import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
+import com.rawly.webapp.domain.port.UserPersistencePort;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Validator for phone number, implementing the {@link ConstraintValidator}
@@ -22,26 +26,31 @@ import jakarta.validation.ConstraintValidatorContext;
  * {@link ValidationUtils#buildViolation}.
  * </p>
  */
+@RequiredArgsConstructor
 public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
 
-    private boolean isUpdate;
+    private boolean allowNullIfUpdating;
+    private final UserPersistencePort userRepositoryPort;
 
     @Override
     public void initialize(ValidPhoneNumber constraintAnnotation) {
-        this.isUpdate = constraintAnnotation.isUpdate();
+        this.allowNullIfUpdating = constraintAnnotation.allowNullIfUpdating();
     }
 
     @Override
     public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
-        if (isUpdate && phoneNumber == null) {
+        if (allowNullIfUpdating && phoneNumber == null) {
             return true;
         }
 
         if (isNullOrEmpty(phoneNumber)) {
-            return ValidationUtils.buildViolation(context, "phone.number.required");
+            return ValidationUtils.buildViolation(context, "validation.phone-number.invalid");
         }
         if (isInvalidPattern(phoneNumber)) {
-            return ValidationUtils.buildViolation(context, "phone.number.invalid");
+            return ValidationUtils.buildViolation(context, "validation.phone-number.invalid");
+        }
+        if (isPhoneNumberExist(phoneNumber)) {
+            return ValidationUtils.buildViolation(context, "validation.phone-number.in-use");
         }
         return true;
     }
@@ -52,6 +61,10 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
 
     private boolean isInvalidPattern(String phoneNumber) {
         return !ValidationPatterns.PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches();
+    }
+
+    private boolean isPhoneNumberExist(String phoneNumber) {
+        return userRepositoryPort.existsByPhoneNumber(phoneNumber);
     }
 
 }

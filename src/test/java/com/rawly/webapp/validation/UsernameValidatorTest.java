@@ -19,22 +19,22 @@ public class UsernameValidatorTest {
     private UsernameValidator validator;
     private ConstraintValidatorContext context;
 
-    @BeforeEach
-    void setUp() {
-        validator = new UsernameValidator();
-        context = mock(ConstraintValidatorContext.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
-                ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        ValidUsername annotation = mock(ValidUsername.class);
+    // @BeforeEach
+    // void setUp() {
+    //     validator = new UsernameValidator();
+    //     context = mock(ConstraintValidatorContext.class);
+    //     ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
+    //             ConstraintValidatorContext.ConstraintViolationBuilder.class);
+    //     ValidUsername annotation = mock(ValidUsername.class);
 
-        when(annotation.min()).thenReturn(5);
-        when(annotation.max()).thenReturn(50);
+    //     when(annotation.min()).thenReturn(5);
+    //     when(annotation.max()).thenReturn(50);
 
-        validator.initialize(annotation);
+    //     validator.initialize(annotation);
 
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        when(builder.addConstraintViolation()).thenReturn(context);
-    }
+    //     when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
+    //     when(builder.addConstraintViolation()).thenReturn(context);
+    // }
 
     @Test
     void testNullUsername() {

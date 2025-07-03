@@ -1,6 +1,6 @@
 package com.rawly.webapp.dto.auth;
 
-import com.rawly.webapp.model.Gender;
+import com.rawly.webapp.domain.Gender;
 import com.rawly.webapp.validation.annotations.PasswordMatches;
 import com.rawly.webapp.validation.annotations.ValidEmail;
 import com.rawly.webapp.validation.annotations.ValidFirstName;

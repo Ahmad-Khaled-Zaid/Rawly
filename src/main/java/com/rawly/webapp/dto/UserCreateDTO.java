@@ -3,14 +3,14 @@ package com.rawly.webapp.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rawly.webapp.model.Gender;
+import com.rawly.webapp.domain.Gender;
 import com.rawly.webapp.validation.annotations.ValidEmail;
 import com.rawly.webapp.validation.annotations.ValidFirstName;
 import com.rawly.webapp.validation.annotations.ValidLastName;
 import com.rawly.webapp.validation.annotations.ValidPassword;
 import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
 import com.rawly.webapp.validation.annotations.ValidUsername;
-import com.rawly.webapp.validation.validationGroups.ICreateGroup;
+import com.rawly.webapp.validation.validationGroups.CreateGroup;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,28 +25,28 @@ import lombok.ToString;
 @Builder
 @Getter
 public class UserCreateDTO {
-    @ValidFirstName(groups = ICreateGroup.class)
+    @ValidFirstName(groups = CreateGroup.class)
     private String firstName;
 
-    @ValidLastName(groups = ICreateGroup.class)
+    @ValidLastName(groups = CreateGroup.class)
     private String lastName;
 
-    @ValidUsername(groups = ICreateGroup.class)
+    @ValidUsername(groups = CreateGroup.class)
     private String username;
 
-    @ValidEmail(groups = ICreateGroup.class)
+    @ValidEmail(groups = CreateGroup.class)
     private String email;
 
-    @NotNull(message = "Gender is required.", groups = ICreateGroup.class)
+    @NotNull(message = "Gender is required.", groups = CreateGroup.class)
     private Gender gender;
 
-    @ValidPassword(groups = ICreateGroup.class)
+    @ValidPassword(groups = CreateGroup.class)
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Setter
     private String password;
 
-    @ValidPhoneNumber(groups = ICreateGroup.class)
+    @ValidPhoneNumber(groups = CreateGroup.class)
     private String phoneNumber;
 
     private List<String> roles;

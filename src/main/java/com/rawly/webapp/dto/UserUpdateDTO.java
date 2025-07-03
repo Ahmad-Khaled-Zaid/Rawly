@@ -1,12 +1,12 @@
 package com.rawly.webapp.dto;
 
-import com.rawly.webapp.model.Gender;
+import com.rawly.webapp.domain.Gender;
 import com.rawly.webapp.validation.annotations.ValidEmail;
 import com.rawly.webapp.validation.annotations.ValidFirstName;
 import com.rawly.webapp.validation.annotations.ValidLastName;
 import com.rawly.webapp.validation.annotations.ValidPhoneNumber;
 import com.rawly.webapp.validation.annotations.ValidUsername;
-import com.rawly.webapp.validation.validationGroups.IUpdateGroup;
+import com.rawly.webapp.validation.validationGroups.UpdateGroup;
 
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
@@ -19,23 +19,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class UserUpdateDTO {
-    @ValidFirstName(isUpdate = true, groups = IUpdateGroup.class)
+    @ValidFirstName(allowNullIfUpdating = true, groups = UpdateGroup.class)
     @Nullable
     private String firstName;
 
-    @ValidLastName(isUpdate = true, groups = IUpdateGroup.class)
+    @ValidLastName(allowNullIfUpdating = true, groups = UpdateGroup.class)
     @Nullable
     private String lastName;
 
-    @ValidUsername(isUpdate = true, groups = IUpdateGroup.class)
+    @ValidUsername(allowNullIfUpdating = true, groups = UpdateGroup.class)
     @Nullable
     private String username;
 
-    @ValidEmail(isUpdate = true, groups = IUpdateGroup.class)
+    @ValidEmail(allowNullIfUpdating = true, groups = UpdateGroup.class)
     @Nullable
     private String email;
 
-    @ValidPhoneNumber(isUpdate = true, groups = IUpdateGroup.class)
+    @ValidPhoneNumber(allowNullIfUpdating = true, groups = UpdateGroup.class)
     @Nullable
     private String phoneNumber;
 

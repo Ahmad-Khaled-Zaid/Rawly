@@ -37,31 +37,31 @@ public class FirstNameValidator implements ConstraintValidator<ValidFirstName, S
 
     private int min;
     private int max;
-    private boolean isUpdate;
+    private boolean allowNullIfUpdating;
 
     @Override
     public void initialize(ValidFirstName constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
-        this.isUpdate = constraintAnnotation.isUpdate();
+        this.allowNullIfUpdating = constraintAnnotation.allowNullIfUpdating();
     }
 
     @Override
     public boolean isValid(String firstName, ConstraintValidatorContext context) {
-        if (isUpdate && firstName == null) {
+        if (allowNullIfUpdating && firstName == null) {
             return true;
         }
         if (isNullOrEmpty(firstName)) {
-            return ValidationUtils.buildViolation(context, "first.name.required");
+            return ValidationUtils.buildViolation(context, "validation.first-name.required");
         }
         if (hasLeadingOrTrailingWhitespace(firstName)) {
-            return ValidationUtils.buildViolation(context, "first.name.whitespace");
+            return ValidationUtils.buildViolation(context, "validation.first-name.whitespace");
         }
         if (isLengthOutOfBounds(firstName)) {
-            return ValidationUtils.buildViolation(context, "first.name.size");
+            return ValidationUtils.buildViolation(context, "validation.first-name.size");
         }
         if (isInvalidPattern(firstName)) {
-            return ValidationUtils.buildViolation(context, "first.name.invalid");
+            return ValidationUtils.buildViolation(context, "validation.first-name.invalid");
         }
 
         return true;

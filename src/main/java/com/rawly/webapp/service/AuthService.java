@@ -1,13 +1,16 @@
 package com.rawly.webapp.service;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ServerErrorException;
 
+import com.rawly.webapp.constants.AuthConstants;
 import com.rawly.webapp.dto.auth.LoginRequest;
 import com.rawly.webapp.dto.auth.LoginResponse;
+import com.rawly.webapp.exception.AuthenticationServiceException;
 import com.rawly.webapp.security.IAuthenticatedUser;
 import com.rawly.webapp.security.IUserDetailsWithId;
 import com.rawly.webapp.security.JwtService;
@@ -25,24 +28,34 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final MessageSource messageSource;
 
     public LoginResponse login(LoginRequest request) {
 
-        IAuthenticatedUser user = authenticatedUserService.loadUserByUserEmail(request.getEmail()); // prevent enumeration attacks
+        IAuthenticatedUser user = authenticatedUserService.loadUserByUserEmail(request.getEmail());
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             log.warn("Invalid password attempt for user: {}", request.getEmail());
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadCredentialsException(
+                    messageSource.getMessage("auth.login.invalid-credentials", null,
+                            AuthConstants.DEFAULT_LOGIN_ERROR,
+                            LocaleContextHolder.getLocale()));
         }
 
         if (!user.isEnabled()) {
             log.warn("Login attempt for disabled account: {}", request.getEmail());
-            throw new BadCredentialsException("Account is disabled. Please contact support.");
+            throw new BadCredentialsException(
+                    messageSource.getMessage("auth.login.account.disabled", null,
+                            AuthConstants.DEFAULT_LOGIN_ERROR,
+                            LocaleContextHolder.getLocale()));
         }
 
         if (!user.isAccountNonLocked()) {
             log.warn("Login attempt for locked account: {}", request.getEmail());
-            throw new BadCredentialsException("Account is locked. Please try again later or reset your password.");
+            throw new BadCredentialsException(
+                    messageSource.getMessage("auth.login.account.locked", null,
+                            AuthConstants.DEFAULT_LOGIN_ERROR,
+                            LocaleContextHolder.getLocale()));
         }
 
         try {
@@ -50,7 +63,9 @@ public class AuthService {
             if (!(userDetails instanceof IUserDetailsWithId)) {
                 log.error("Unexpected user type: {} for email: {}", userDetails.getClass().getName(),
                         request.getEmail());
-                throw new ServerErrorException("Authentication error: Invalid user type", null);
+                throw new AuthenticationServiceException(
+                        messageSource.getMessage("auth.login.unexpected-error", null,
+                                AuthConstants.DEFAULT_LOGIN_ERROR, LocaleContextHolder.getLocale()));
             }
             IUserDetailsWithId rawlyUser = (IUserDetailsWithId) userDetails;
             String accessToken = jwtService.generateAccessToken(userDetails);
@@ -63,14 +78,17 @@ public class AuthService {
                     rawlyUser.getUserId(),
                     userDetails.getUsername(),
                     AuthStatus.SUCCESS,
-                    "Login successful");
+                    messageSource.getMessage("auth.login.success", null,
+                            "Login successful", LocaleContextHolder.getLocale()));
         } catch (BadCredentialsException ex) {
             log.warn("Authentication failed for user: {} - {}", request.getEmail(), ex.getMessage());
             throw ex;
         } catch (Exception ex) {
             log.error("Unexpected error during login for user: {} ", request.getEmail(), ex);
-            throw new ServerErrorException(
-                    "An unexpected error occurred during authentication. Please try again later.", ex);
+            throw new AuthenticationServiceException(
+                    messageSource.getMessage("auth.login.unexpected-error", null,
+                            AuthConstants.DEFAULT_LOGIN_ERROR, LocaleContextHolder.getLocale()));
+
         }
     }
 }

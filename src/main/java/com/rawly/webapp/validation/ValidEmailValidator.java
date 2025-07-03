@@ -1,13 +1,16 @@
 package com.rawly.webapp.validation;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.stereotype.Component;
 
 import com.rawly.webapp.util.ValidationPatterns;
 import com.rawly.webapp.util.ValidationUtils;
 import com.rawly.webapp.validation.annotations.ValidEmail;
+import com.rawly.webapp.domain.port.UserPersistencePort;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Validator for email field annotated with {@link ValidEmail}.
@@ -30,31 +33,37 @@ import jakarta.validation.ConstraintValidatorContext;
  * @see ValidationUtils
  * @see ValidationPatterns
  */
+@RequiredArgsConstructor
+@Component
 public class ValidEmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     private final EmailValidator emailValidator = EmailValidator.getInstance(false, true);
-    private boolean isUpdate;
+    private final UserPersistencePort userRepositoryPort;
+    private boolean allowNullIfUpdating;
 
     @Override
     public void initialize(ValidEmail constraintAnnotation) {
-        this.isUpdate = constraintAnnotation.isUpdate();
+        this.allowNullIfUpdating = constraintAnnotation.allowNullIfUpdating();
     }
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        if (isUpdate && email == null) {
+        if (allowNullIfUpdating && email == null) {
             return true;
         }
         if (isNullOrEmpty(email)) {
-            return ValidationUtils.buildViolation(context, "email.required");
+            return ValidationUtils.buildViolation(context, "validation.email.required");
         }
 
         if (isInvalidEmail(email)) {
-            return ValidationUtils.buildViolation(context, "email.invalid");
+            return ValidationUtils.buildViolation(context, "validation.email.invalid");
         }
 
         if (isInvalidPattern(email)) {
-            return ValidationUtils.buildViolation(context, "email.invalid");
+            return ValidationUtils.buildViolation(context, "validation.email.invalid");
+        }
+        if (isEmailRegistered(email)) {
+            return ValidationUtils.buildViolation(context, "validation.email.in-use");
         }
         return true;
     }
@@ -69,5 +78,9 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
 
     private boolean isInvalidPattern(String email) {
         return !ValidationPatterns.EMAIL_PATTERN.matcher(email).matches();
+    }
+
+    private boolean isEmailRegistered(String email) {
+        return userRepositoryPort.existsByEmail(email);
     }
 }

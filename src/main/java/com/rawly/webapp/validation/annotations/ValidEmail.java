@@ -15,10 +15,10 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = ValidEmailValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEmail {
+public @interface ValidEmail  {
     String message() default "Invalid email address";
 
-    boolean isUpdate() default false;
+    boolean allowNullIfUpdating() default false;
 
     Class<?>[] groups() default {};
 

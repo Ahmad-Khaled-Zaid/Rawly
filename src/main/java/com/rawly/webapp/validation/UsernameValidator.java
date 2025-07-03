@@ -1,11 +1,15 @@
 package com.rawly.webapp.validation;
 
+import org.springframework.stereotype.Component;
+
 import com.rawly.webapp.util.ValidationPatterns;
 import com.rawly.webapp.util.ValidationUtils;
 import com.rawly.webapp.validation.annotations.ValidUsername;
+import com.rawly.webapp.domain.port.UserPersistencePort;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Validates username according to application requirements.
@@ -25,32 +29,37 @@ import jakarta.validation.ConstraintValidatorContext;
  * @see ValidUsername
  * @see ConstraintValidator
  */
+@RequiredArgsConstructor
 public class UsernameValidator implements ConstraintValidator<ValidUsername, String> {
 
     private int min;
     private int max;
-    private boolean isUpdate;
+    private boolean allowNullIfUpdating;
+    private final UserPersistencePort userPersistencePort;
 
     @Override
     public void initialize(ValidUsername constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
-        this.isUpdate = constraintAnnotation.isUpdate();
+        this.allowNullIfUpdating = constraintAnnotation.allowNullIfUpdating();
     }
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
-        if (isUpdate && username == null) {
+        if (allowNullIfUpdating && username == null) {
             return true;
         }
         if (isNullOrEmpty(username)) {
-            return ValidationUtils.buildViolation(context, "username.required");
+            return ValidationUtils.buildViolation(context, "validation.username.required");
         }
         if (isLengthInvalid(username)) {
-            return ValidationUtils.buildViolation(context, "username.size");
+            return ValidationUtils.buildViolation(context, "validation.username.size");
         }
         if (isInvalidPattern(username)) {
-            return ValidationUtils.buildViolation(context, "username.invalid");
+            return ValidationUtils.buildViolation(context, "validation.username.invalid");
+        }
+        if (isUsernameExist(username)) {
+            return ValidationUtils.buildViolation(context, "validation.username.in-use");
         }
         return true;
     }
@@ -65,5 +74,9 @@ public class UsernameValidator implements ConstraintValidator<ValidUsername, Str
 
     private boolean isInvalidPattern(String username) {
         return !ValidationPatterns.USERNAME_PATTERN.matcher(username).matches();
+    }
+
+    private boolean isUsernameExist(String username) {
+        return userPersistencePort.existsByUsername(username);
     }
 }

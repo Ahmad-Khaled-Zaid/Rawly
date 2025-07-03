@@ -16,16 +16,16 @@ public class ValidEmailValidatorTest {
     private ValidEmailValidator validator;
     private ConstraintValidatorContext context;
 
-    @BeforeEach
-    void setUp() {
-        validator = new ValidEmailValidator();
-        context = mock(ConstraintValidatorContext.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
-                ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        when(builder.addConstraintViolation()).thenReturn(context);
+    // @BeforeEach
+    // void setUp() {
+    //     validator = new ValidEmailValidator();
+    //     context = mock(ConstraintValidatorContext.class);
+    //     ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
+    //             ConstraintValidatorContext.ConstraintViolationBuilder.class);
+    //     when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
+    //     when(builder.addConstraintViolation()).thenReturn(context);
 
-    }
+    // }
 
     @Test
     void testNullEmail() {

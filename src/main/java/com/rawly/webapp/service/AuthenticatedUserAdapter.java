@@ -1,6 +1,6 @@
 package com.rawly.webapp.service;
 
-import com.rawly.webapp.model.User;
+import com.rawly.webapp.domain.model.User;
 import com.rawly.webapp.security.IAuthenticatedUser;
 
 import lombok.RequiredArgsConstructor;

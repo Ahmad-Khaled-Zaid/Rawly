@@ -9,13 +9,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.rawly.webapp.model.User;
+import com.rawly.webapp.domain.model.User;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class UserDetailsAdapter implements UserDetails, IUserDetailsWithId {
     private final User user;
+
+    public UserDetailsAdapter(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

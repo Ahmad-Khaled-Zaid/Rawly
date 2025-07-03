@@ -1,7 +1,6 @@
 package com.rawly.webapp.security;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("authHeader-1 {}", authHeader);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.info("authHeader-2");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
+            filterChain.doFilter(request, response);
+
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid
+            // Authorization header");
             return;
         }
 

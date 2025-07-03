@@ -18,7 +18,7 @@ import jakarta.validation.Payload;
 public @interface ValidPhoneNumber {
     String message() default "Invalid phone number.";
 
-    boolean isUpdate() default false;
+    boolean allowNullIfUpdating() default false;
 
     Class<?>[] groups() default {};
 

@@ -33,31 +33,31 @@ public class LastNameValidator implements ConstraintValidator<ValidLastName, Str
 
     private int min;
     private int max;
-    private boolean isUpdate;
+    private boolean allowNullIfUpdating;
 
     @Override
     public void initialize(ValidLastName constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
-        this.isUpdate = constraintAnnotation.isUpdate();
+        this.allowNullIfUpdating = constraintAnnotation.allowNullIfUpdating();
     }
 
     @Override
     public boolean isValid(String lastName, ConstraintValidatorContext context) {
-        if (isUpdate && lastName == null) {
+        if (allowNullIfUpdating && lastName == null) {
             return true;
         }
         if (isNullOrEmpty(lastName)) {
-            return ValidationUtils.buildViolation(context, "last.name.required");
+            return ValidationUtils.buildViolation(context, "validation.last-name.required");
         }
         if (hasLeadingOrTrailingWhitespace(lastName)) {
-            return ValidationUtils.buildViolation(context, "last.name.whitespace");
+            return ValidationUtils.buildViolation(context, "validation.last-name.whitespace");
         }
         if (isLengthOutOfBounds(lastName)) {
-            return ValidationUtils.buildViolation(context, "last.name.size");
+            return ValidationUtils.buildViolation(context, "validation.last-name.size");
         }
         if (isInvalidPattern(lastName)) {
-            return ValidationUtils.buildViolation(context, "last.name.invalid");
+            return ValidationUtils.buildViolation(context, "validation.last-name.invalid");
         }
         return true;
     }

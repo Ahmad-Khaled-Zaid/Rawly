@@ -1,15 +1,9 @@
-package com.rawly.webapp.model;
+package com.rawly.webapp.domain.model;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rawly.webapp.domain.Gender;
 import com.rawly.webapp.dto.UserCreateDTO;
 import com.rawly.webapp.dto.UserUpdateDTO;
 import com.rawly.webapp.validation.annotations.ValidEmail;
@@ -23,9 +17,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -34,21 +25,18 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @Builder
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false)
-    private UUID id;
+public class User extends BaseEntity {
 
     @ValidFirstName
     @Column(nullable = false)
@@ -72,7 +60,6 @@ public class User {
     private Gender gender;
 
     @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
@@ -80,35 +67,21 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
-    @CreationTimestamp
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @JsonIgnore
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
     @Builder.Default
-    @JsonIgnore
     private boolean accountNonExpired = true;
 
     @Builder.Default
-    @JsonIgnore
     private boolean accountNonLocked = true;
 
     @Builder.Default
-    @JsonIgnore
     private boolean credentialsNonExpired = true;
 
     @Builder.Default
-    @JsonIgnore
     private boolean isEnabled = true;
 
     public void updateFromDTO(UserUpdateDTO userDetails) {

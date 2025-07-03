@@ -22,7 +22,7 @@ public @interface ValidUsername {
 
     int max() default 50;
 
-    boolean isUpdate() default false;
+    boolean allowNullIfUpdating() default false;
 
     Class<?>[] groups() default {};
 

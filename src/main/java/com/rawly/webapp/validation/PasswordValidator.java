@@ -37,16 +37,16 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         if (isNullOrEmpty(password)) {
-            return ValidationUtils.buildViolation(context, "password.required");
+            return ValidationUtils.buildViolation(context, "validation.password.required");
         }
         if (hasLeadingOrTrailingWhitespace(password)) {
-            return ValidationUtils.buildViolation(context, "password.whitespace");
+            return ValidationUtils.buildViolation(context, "validation.password.whitespace");
         }
         if (isLengthInvalid(password)) {
-            return ValidationUtils.buildViolation(context, "password.size");
+            return ValidationUtils.buildViolation(context, "validation.password.size");
         }
         if (isPatternInvalid(password)) {
-            return ValidationUtils.buildViolation(context, "password.invalid");
+            return ValidationUtils.buildViolation(context, "validation.password.invalid");
         }
         return true;
     }
